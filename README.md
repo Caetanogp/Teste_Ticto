@@ -4,8 +4,8 @@ Teste técnico para a vaga de Gerente de Automações da [Ticto](https://ticto.c
 
 Landing page de captura do evento **Outlier Experience 2025**, com formulário YayForms embeddado, integração com o CRM Datacrazy e rastreamento completo de parâmetros UTM, SCK e SRC.
 
-**Deploy:** [https://teste-ticto.vercel.app](https://teste-ticto.vercel.app)
-**URL de teste com parâmetros:** [https://teste-ticto.vercel.app?utm_source=teste&utm_medium=email&utm_campaign=avaliacao&utm_content=hero&utm_term=automacao&sck=123&src=linkedin](https://teste-ticto.vercel.app?utm_source=teste&utm_medium=email&utm_campaign=avaliacao&utm_content=hero&utm_term=automacao&sck=123&src=linkedin)
+**Deploy:** https://teste-ticto.vercel.app
+**URL de teste com parâmetros:** https://teste-ticto.vercel.app?utm_source=teste&utm_medium=email&utm_campaign=avaliacao&utm_content=hero&utm_term=automacao&sck=123&src=linkedin
 
 ---
 
