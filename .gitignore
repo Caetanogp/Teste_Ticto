@@ -38,6 +38,9 @@ yarn-error.log*
 CLAUDE.md
 AGENTS.md
 
+# Test specification (internal only)
+teste-tecnico-automacoes.md
+
 # vercel
 .vercel
 
