@@ -1,36 +1,102 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Outlier Experience 2025 — Landing Page
 
-## Getting Started
+Teste técnico para a vaga de Gerente de Automações da [Ticto](https://ticto.com.br).
 
-First, run the development server:
+Landing page de captura do evento **Outlier Experience 2025**, com formulário YayForms embeddado, integração com o CRM Datacrazy e rastreamento completo de parâmetros UTM, SCK e SRC.
+
+**Deploy:** [https://teste-ticto.vercel.app](https://teste-ticto.vercel.app)
+**URL de teste com parâmetros:** [https://teste-ticto.vercel.app?utm_source=teste&utm_medium=email&utm_campaign=avaliacao&utm_content=hero&utm_term=automacao&sck=123&src=linkedin](https://teste-ticto.vercel.app?utm_source=teste&utm_medium=email&utm_campaign=avaliacao&utm_content=hero&utm_term=automacao&sck=123&src=linkedin)
+
+---
+
+## Como rodar o projeto localmente
+
+**Pré-requisitos:** Node.js 18+ e npm.
 
 ```bash
+# 1. Clone o repositório
+git clone https://github.com/Caetanogp/Teste_Ticto.git
+cd Teste_Ticto
+
+# 2. Instale as dependências
+npm install
+
+# 3. Crie o arquivo de variáveis de ambiente
+cp .env.example .env.local
+# Edite .env.local com os valores reais (veja a seção abaixo)
+
+# 4. Inicie o servidor de desenvolvimento
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Acesse [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Variáveis de ambiente
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variável | Descrição |
+|---|---|
+| `NEXT_PUBLIC_YAYFORMS_EMBED_URL` | URL direta do formulário YayForms |
+| `NEXT_PUBLIC_YAYFORMS_EMBED_ID` | ID do formulário YayForms |
+| `NEXT_PUBLIC_SITE_URL` | URL de produção do projeto |
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## Decisões técnicas
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Next.js 16 (App Router) + React 19 + TypeScript** — obrigatório pelo enunciado; App Router escolhido por ser a abordagem moderna e recomendada pelo Next.js.
+- **Tailwind CSS v4** — produtividade na estilização com tokens de design centralizados, sem CSS customizado desnecessário.
+- **Inter (Google Fonts via `next/font`)** — tipografia fiel ao layout de referência, com carregamento otimizado.
 
-## Deploy on Vercel
+### Embed do formulário: iframe direto
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+O YayForms oferece dois métodos de embed: script (`<div data-yf-widget>`) e iframe direto. Optei pelo **iframe direto** após verificar que o método de script não encaminhava os parâmetros UTM corretamente para o webhook do Datacrazy.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Com o iframe, os parâmetros de rastreamento são anexados diretamente à URL do formulário:
+
+```
+https://caetano3.yayforms.link/lydOo2b?utm_source=teste&utm_medium=email&...
+```
+
+O YayForms captura esses parâmetros nativamente (toggle "Rastreamento UTM" ativado na aba Compartilhar) e os inclui no payload enviado ao webhook do Datacrazy no objeto `response.tracking`.
+
+### Encaminhamento de parâmetros de rastreamento
+
+O componente `YayFormsEmbed` usa `useSearchParams` (hook do Next.js) para ler os 7 parâmetros da URL da landing page em tempo real e repassá-los ao iframe. Como `useSearchParams` requer hidratação no cliente, o componente é envolvido em um `<Suspense>` boundary, conforme exigido pelo App Router.
+
+Os parâmetros rastreados são:
+
+| Parâmetro | Origem no Datacrazy |
+|---|---|
+| `utm_source` | `response.tracking.utm_source` |
+| `utm_medium` | `response.tracking.utm_medium` |
+| `utm_campaign` | `response.tracking.utm_campaign` |
+| `utm_content` | `response.tracking.utm_content` |
+| `utm_term` | `response.tracking.utm_term` |
+| `sck` | `response.hiddenFields` (campo oculto YayForms) |
+| `src` | `response.hiddenFields` (campo oculto YayForms) |
+
+### Integração Datacrazy
+
+A integração foi feita via **webhook nativo do YayForms** apontando para o endpoint do Datacrazy. Os campos do lead (nome, e-mail, telefone) foram mapeados com os caminhos JSON do payload do YayForms. Os parâmetros UTM foram mapeados nos "Campos adicionais" do Datacrazy usando os caminhos `response.tracking.*`.
+
+---
+
+## Dificuldades encontradas
+
+### 1. Figma inacessível
+
+O arquivo do Figma fornecido no enunciado pertence à organização da Ticto. Meu token pessoal retornou 404 na API. Como não era possível solicitar acesso à empresa durante o teste, utilizei o site de referência [lp3.outlierxp.com.br](https://lp3.outlierxp.com.br) para extrair os textos, estrutura de seções e identidade visual do evento.
+
+### 2. Método de embed do YayForms e passagem de UTMs
+
+A abordagem inicial com o atributo `data-yf-transitive-search-params` no script embed não resultou nos parâmetros chegando ao Datacrazy. Após análise do payload real recebido no webhook, identifiquei que o YayForms captura UTMs nativamente via URL quando o toggle de rastreamento está ativo. A solução foi migrar para iframe com os parâmetros anexados diretamente à URL do `src`.
+
+### 3. Campos ocultos `utm_*` reservados no YayForms
+
+Ao tentar criar campos ocultos para `utm_source`, `utm_medium` etc., o YayForms retornou erro informando que esses nomes já estão em uso — eles são reservados pelo sistema de rastreamento nativo. Os parâmetros UTM chegam ao Datacrazy via `response.tracking`, não via `hiddenFields`. Apenas `sck` e `src` foram adicionados como campos ocultos.
+
+### 4. `useSearchParams` exige `<Suspense>` no App Router
+
+O hook `useSearchParams` do Next.js lança um erro de build quando usado fora de um `Suspense` boundary no App Router. O componente `YayFormsEmbed` foi isolado com `<Suspense>` na `FormSection` para resolver o problema.
