@@ -30,12 +30,10 @@ export function YayFormsEmbed({ minHeight = 700, className }: YayFormsEmbedProps
   }, [searchParams]);
 
   return (
-    <div style={{ width: "100%", height: minHeight, minHeight }}>
+    <div className="yf-wrapper">
       <iframe
         title="Formulário de inscrição — Outlier Experience 2025"
         src={src}
-        className={className}
-        style={{ display: "block", width: "100%", height: "100%", border: 0 }}
         loading="lazy"
         allow="clipboard-write"
       />
