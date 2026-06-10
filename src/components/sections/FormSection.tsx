@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import { YayFormsEmbed } from "@/components/YayFormsEmbed";
 import { siteConfig } from "@/config/site";
 
@@ -40,12 +39,10 @@ export function FormSection() {
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 sm:p-8">
-          <Suspense>
-            <YayFormsEmbed
-              minHeight={520}
-              className="w-full rounded-xl overflow-hidden"
-            />
-          </Suspense>
+          <YayFormsEmbed
+            minHeight={520}
+            className="w-full rounded-xl overflow-hidden"
+          />
         </div>
       </div>
     </section>
