@@ -4,7 +4,9 @@ import { useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { REQUIRED_TRACKING_PARAMS } from "@/lib/tracking";
 
-const FORM_BASE_URL = "https://caetano3.yayforms.link/lydOo2b";
+const FORM_BASE_URL =
+  process.env.NEXT_PUBLIC_YAYFORMS_EMBED_URL ??
+  "https://caetano3.yayforms.link/lydOo2b";
 
 type YayFormsEmbedProps = {
   minHeight?: number;
@@ -31,13 +33,13 @@ export function YayFormsEmbed({ minHeight = 700, className }: YayFormsEmbedProps
 
   return (
     <div
-      className="yf-wrapper"
-      style={{ width: "100%", height: "700px", minHeight: "700px" }}
+      className={`yf-wrapper${className ? ` ${className}` : ""}`}
+      style={{ width: "100%", height: minHeight, minHeight }}
     >
       <iframe
         title="Formulário de inscrição — Outlier Experience 2025"
         src={src}
-        style={{ display: "block", width: "100%", height: "100%", minHeight: "700px", border: 0 }}
+        style={{ display: "block", width: "100%", height: "100%", minHeight, border: 0 }}
         loading="lazy"
         allow="clipboard-write"
       />

@@ -100,3 +100,29 @@ Ao tentar criar campos ocultos para `utm_source`, `utm_medium` etc., o YayForms 
 ### 4. `useSearchParams` exige `<Suspense>` no App Router
 
 O hook `useSearchParams` do Next.js lança um erro de build quando usado fora de um `Suspense` boundary no App Router. O componente `YayFormsEmbed` foi isolado com `<Suspense>` na `FormSection` para resolver o problema.
+
+---
+
+## Evidências
+
+Lead criado no Datacrazy após submissão do formulário em produção, com os 7 parâmetros de rastreamento chegando junto com os dados do lead.
+
+**Lead na lista do Datacrazy:**
+
+![Lead na lista do Datacrazy](docs/printTesteTicto5.png)
+
+**Dados do lead (nome, e-mail, telefone):**
+
+![Dados do lead](docs/printTesteTicto6.png)
+
+**Lead aberto com a aba "Campos adicionais":**
+
+![Lead com campos adicionais](docs/printTesteTicto4.png)
+
+**Parâmetros de rastreamento recebidos** (`utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`, `sck`, `src`):
+
+![utm_source, utm_medium, utm_campaign](docs/printTesteTicto3.png)
+![utm_content, utm_term, sck](docs/printTesteTicto2.png)
+![src](docs/printTesteTicto1.png)
+
+> Submissão feita via URL de teste com a query string completa de UTM/SCK/SRC. Os parâmetros `utm_*` chegam ao Datacrazy via objeto `response.tracking` do YayForms; `sck` e `src` chegam via `response.hiddenFields`.
